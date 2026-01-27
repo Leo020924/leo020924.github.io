@@ -22,23 +22,25 @@
         }
 
         body {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: var(--color-bg);
             font-family: 'Quicksand', sans-serif;
             overflow: hidden;
+            perspective: 1000px;
         }
 
-        /* Fondo de corazones flotantes */
+        /* Corazones de fondo */
         .hearts {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
+            pointer-events: none;
         }
 
         .heart-float {
@@ -51,10 +53,20 @@
 
         @keyframes float {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Estructura del Sobre */
+        /* Contenedor principal para control de posición */
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s ease;
+            margin-top: 100px; /* Espacio para que la carta suba */
+        }
+
         .envelope-wrapper {
             position: relative;
             cursor: pointer;
@@ -62,7 +74,7 @@
         }
 
         .envelope-wrapper:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
         .envelope {
@@ -72,12 +84,13 @@
             background: var(--color-envelope);
             border-radius: 0 0 15px 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            z-index: 2;
         }
 
         .envelope::before {
             content: "";
             position: absolute;
-            z-index: 2;
+            z-index: 4;
             border-top: 115px solid transparent;
             border-right: 175px solid var(--color-envelope-dark);
             border-bottom: 115px solid var(--color-envelope-dark);
@@ -85,7 +98,6 @@
             border-radius: 0 0 15px 15px;
         }
 
-        /* Tapa del sobre */
         .flap {
             position: absolute;
             top: 0;
@@ -96,48 +108,51 @@
             border-top: 130px solid var(--color-envelope-dark);
             transform-origin: top;
             transition: transform 0.6s ease;
-            z-index: 3;
+            z-index: 5;
         }
 
-        /* Carta dentro del sobre */
+        /* CARTA CORREGIDA */
         .letter {
             position: absolute;
             bottom: 10px;
-            left: 10px;
-            width: 330px;
-            height: 200px;
+            left: 15px;
+            width: 320px;
+            max-height: 80vh; /* Para que nunca se salga de la pantalla */
             background: var(--color-letter);
-            padding: 25px;
+            padding: 30px 20px;
             border-radius: 10px;
-            transition: transform 0.8s ease, height 0.8s ease;
+            transition: transform 0.8s ease;
             z-index: 1;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            overflow-y: auto;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            overflow-y: auto; /* Scroll si el texto es largo */
+            display: flex;
+            flex-direction: column;
         }
 
         .letter h1 {
             font-family: 'Dancing Script', cursive;
             color: var(--color-accent);
-            font-size: 22px;
+            font-size: 26px;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .letter p {
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 15px;
+            line-height: 1.8;
             color: var(--color-text);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: justify;
         }
 
         .letter .firma {
             text-align: right;
             font-weight: 600;
-            margin-top: 15px;
+            margin-top: 20px;
             color: var(--color-accent);
+            font-size: 16px;
         }
 
-        /* Sello de corazón */
         .heart-seal {
             position: absolute;
             top: 100px;
@@ -152,40 +167,35 @@
             align-items: center;
             color: white;
             font-size: 25px;
-            z-index: 4;
+            z-index: 6;
             transition: opacity 0.4s;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* Estado Abierto */
-        .envelope-wrapper.open .flap {
+        /* ESTADO ABIERTO CORREGIDO */
+        .open .flap {
             transform: rotateX(180deg);
             z-index: 0;
         }
 
-        .envelope-wrapper.open .letter {
-            transform: translateY(-220px);
-            height: 450px; /* Se expande al abrirse */
-            z-index: 5;
+        .open .letter {
+            transform: translateY(-105%); /* Sube justo lo necesario */
+            z-index: 10;
+            height: 450px; /* Altura fija al abrirse o auto si quieres */
         }
 
-        .envelope-wrapper.open .heart-seal {
+        /* Baja todo el sobre un poco para que la carta tenga espacio arriba */
+        .container.open-container {
+            transform: translateY(150px);
+        }
+
+        .open .heart-seal {
             opacity: 0;
             pointer-events: none;
         }
 
-        /* Scrollbar personalizado para la carta */
-        .letter::-webkit-scrollbar {
-            width: 5px;
-        }
-        .letter::-webkit-scrollbar-thumb {
-            background: var(--color-envelope);
-            border-radius: 10px;
-        }
-
         .instruccion {
-            position: absolute;
-            bottom: 50px;
+            margin-top: 30px;
             color: var(--color-accent);
             font-weight: 600;
             animation: pulse 1.5s infinite;
@@ -196,30 +206,62 @@
             50% { opacity: 1; }
             100% { opacity: 0.5; }
         }
+
+        /* Scrollbar bonito */
+        .letter::-webkit-scrollbar {
+            width: 4px;
+        }
+        .letter::-webkit-scrollbar-thumb {
+            background: #ffd1dc;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
 
     <div class="hearts" id="heartContainer"></div>
 
-    <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
-        <div class="flap"></div>
-        <div class="envelope"></div>
-        <div class="letter">
-            <h1>Para ti, mi amor ❤️</h1>
-            <p>Aquí pones el texto que quieras...</p>
-            <p>No sabía cómo escribir todo lo que siento, porque hay emociones que no caben en palabras, pero decidí crear este pequeño rincón para ti.</p>
-            <p>Gracias por ser mi lugar seguro, por tus risas y por cada momento que compartimos. Eres la persona más especial en mi mundo.</p>
-            <p>Prometo seguir cuidando lo nuestro y elegirte todos los días.</p>
-            <p class="firma">Con todo mi amor,<br>Leo</p>
+    <div class="container" id="mainContainer">
+        <div class="envelope-wrapper" onclick="toggleEnvelope()">
+            <div class="flap"></div>
+            <div class="envelope"></div>
+            <div class="letter">
+                <h1>Para ti, mi amor ❤️</h1>
+                
+                <!-- TU TEXTO AQUÍ -->
+                <p>No sabía muy bien cómo decir todo lo que siento, así que decidí hacerlo de una forma distinta. Esta página existe solo por ti.</p>
+                
+                <p>Desde que llegaste a mi vida, todo tiene más sentido. Tus palabras, tu risa, tu forma de ver el mundo... todo eso se volvió parte de mis días y de mi corazón.</p>
+                
+                <p>Gracias por acompañarme, por apoyarme, por quererme incluso en mis momentos difíciles. No eres solo mi novia, eres mi lugar seguro.</p>
+                
+                <p>Prometo seguir eligiéndote cada día, cuidar lo nuestro y hacerte sentir tan especial como realmente eres.</p>
+                
+                <p class="firma">Con todo mi amor,<br>Leo</p>
+                <!-- FIN DEL TEXTO -->
+                
+            </div>
+            <div class="heart-seal">❤️</div>
         </div>
-        <div class="heart-seal">❤️</div>
+        <div class="instruccion" id="textGuide">Haz clic para abrir</div>
     </div>
 
-    <div class="instruccion">Haz clic para abrir</div>
-
     <script>
-        // Crear corazones flotantes de fondo
+        function toggleEnvelope() {
+            const wrapper = document.querySelector('.envelope-wrapper');
+            const container = document.getElementById('mainContainer');
+            const guide = document.getElementById('textGuide');
+            
+            wrapper.classList.toggle('open');
+            container.classList.toggle('open-container');
+            
+            if(wrapper.classList.contains('open')) {
+                guide.style.opacity = '0';
+            } else {
+                guide.style.opacity = '1';
+            }
+        }
+
         function createHeart() {
             const container = document.getElementById('heartContainer');
             const heart = document.createElement('div');
@@ -227,14 +269,9 @@
             heart.innerHTML = '❤️';
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
-            heart.style.opacity = Math.random();
             container.appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, 6000);
+            setTimeout(() => { heart.remove(); }, 6000);
         }
-
         setInterval(createHeart, 300);
     </script>
 </body>
