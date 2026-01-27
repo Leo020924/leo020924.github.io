@@ -19,16 +19,18 @@
 
         body {
             height: 100vh;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: var(--color-bg);
             font-family: 'Quicksand', sans-serif;
-            overflow: hidden; /* Evita scrolls raros en el fondo */
+            overflow: hidden;
+            position: relative;
         }
 
         /* Corazones de fondo */
-        .hearts { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .hearts { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         .heart-float {
             position: absolute;
             color: rgba(231, 84, 128, 0.3);
@@ -41,31 +43,29 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Contenedor Principal */
-        .container {
+        /* Contenedor principal */
+        .wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* SOBRE */
+        .envelope {
             position: relative;
             width: 350px;
             height: 230px;
-            transition: transform 0.8s ease-in-out;
-        }
-
-        /* El Sobre */
-        .envelope-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .envelope {
-            position: absolute;
-            width: 100%;
-            height: 100%;
             background: var(--color-envelope);
             border-radius: 0 0 15px 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            z-index: 2;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            z-index: 20;
         }
 
         .envelope::before {
@@ -88,56 +88,7 @@
             border-right: 175px solid transparent;
             border-top: 130px solid var(--color-envelope-dark);
             transform-origin: top;
-            transition: transform 0.5s ease;
             z-index: 5;
-        }
-
-        /* LA CARTA: Ahora es inteligente */
-        .letter {
-            position: absolute;
-            top: 10px;
-            left: 15px;
-            width: 320px;
-            height: 180px; /* Tamaño inicial dentro del sobre */
-            background: white;
-            padding: 30px 20px;
-            border-radius: 10px;
-            transition: all 0.8s ease-in-out;
-            z-index: 1;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            overflow: hidden; /* Oculta el texto al inicio */
-            opacity: 0.5;
-        }
-
-        .letter-content {
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            height: 100%;
-            overflow-y: auto; /* Permite leer si el texto es eterno */
-            padding-right: 5px;
-        }
-
-        .letter h1 {
-            font-family: 'Dancing Script', cursive;
-            color: var(--color-accent);
-            font-size: 24px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .letter p {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--color-text);
-            margin-bottom: 10px;
-            text-align: justify;
-        }
-
-        .letter .firma {
-            text-align: right;
-            font-weight: 600;
-            margin-top: 15px;
-            color: var(--color-accent);
         }
 
         .heart-seal {
@@ -145,109 +96,122 @@
             top: 100px;
             left: 50%;
             transform: translateX(-50%);
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             background: #ff4d6d;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            z-index: 6;
-            transition: 0.3s;
+            z-index: 25;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* --- ESTADO ABIERTO --- */
-        .open .flap {
-            transform: rotateX(180deg);
-            z-index: 0;
-        }
-
-        /* Bajamos el contenedor para que la carta no se salga por arriba */
-        .container.is-open {
-            transform: translateY(120px);
-        }
-
-        .open .letter {
-            transform: translateY(-280px); /* Sube pero controlado */
-            height: 400px; /* Crece para mostrar el texto */
-            width: 340px;
-            left: 5px;
-            opacity: 1;
-            padding: 30px;
-            z-index: 10;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.2);
-        }
-
-        .open .letter-content {
-            opacity: 1;
-        }
-
-        .open .heart-seal {
+        /* LA CARTA (Oculta al inicio) */
+        .letter {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
             opacity: 0;
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            overflow-y: auto;
         }
 
-        .instruccion {
-            position: absolute;
-            bottom: -50px;
-            width: 100%;
+        .letter h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--color-accent);
+            font-size: 32px;
             text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .letter p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--color-text);
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .letter .firma {
+            text-align: right;
+            font-weight: 600;
+            margin-top: 25px;
+            color: var(--color-accent);
+            font-size: 18px;
+        }
+
+        /* CUANDO SE ABRE */
+        .opened .envelope {
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+        }
+
+        .opened .letter {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: -60px;
             color: var(--color-accent);
             font-weight: 600;
             animation: pulse 1.5s infinite;
         }
 
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-        /* Scrollbar discreto */
-        .letter-content::-webkit-scrollbar { width: 4px; }
-        .letter-content::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 10px; }
+        /* Scrollbar bonito */
+        .letter::-webkit-scrollbar { width: 6px; }
+        .letter::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div class="hearts" id="heartContainer"></div>
 
-    <div class="container" id="mainContainer">
-        <div class="envelope-wrapper" onclick="openEnvelope()">
+    <div class="wrapper" id="mainWrapper">
+        <!-- Sobre clickeable -->
+        <div class="envelope" onclick="openLetter()">
             <div class="flap"></div>
-            <div class="envelope"></div>
-            
-            <div class="letter">
-                <div class="letter-content">
-                    <h1>Para ti, mi amor ❤️</h1>
-                    <p>No sabía muy bien cómo decir todo lo que siento, así que decidí hacerlo de una forma distinta. Esta página existe solo por ti.</p>
-                    <p>Desde que llegaste a mi vida, todo tiene más sentido. Tus palabras, tu risa, tu forma de ver el mundo... todo eso se volvió parte de mis días y de mi corazón.</p>
-                    <p>Gracias por acompañarme, por apoyarme, por quererme incluso en mis momentos difíciles. No eres solo mi novia, eres mi lugar seguro.</p>
-                    <p>Prometo seguir eligiéndote cada día, cuidar lo nuestro y hacerte sentir tan especial como realmente eres.</p>
-                    <p class="firma">Con todo mi amor,<br>Leo</p>
-                </div>
-            </div>
-
             <div class="heart-seal">❤️</div>
-            <div class="instruccion" id="hint">Haz clic en el sobre</div>
+            <div class="instruction">Haz clic para abrir</div>
+        </div>
+
+        <!-- Carta que aparece centrada -->
+        <div class="letter">
+            <h1>Para ti, mi amor ❤️</h1>
+            
+            <p>No sabía muy bien cómo decir todo lo que siento, así que decidí hacerlo de una forma distinta. Esta página existe solo por ti.</p>
+            
+            <p>Desde que llegaste a mi vida, todo tiene más sentido. Tus palabras, tu risa, tu forma de ver el mundo... todo eso se volvió parte de mis días y de mi corazón.</p>
+            
+            <p>Gracias por acompañarme, por apoyarme, por quererme incluso en mis momentos difíciles. No eres solo mi novia, eres mi lugar seguro.</p>
+            
+            <p>Prometo seguir eligiéndote cada día, cuidar lo nuestro y hacerte sentir tan especial como realmente eres.</p>
+            
+            <p class="firma">Con todo mi amor,<br>Leo</p>
         </div>
     </div>
 
     <script>
-        function openEnvelope() {
-            const container = document.getElementById('mainContainer');
-            const wrapper = document.querySelector('.envelope-wrapper');
-            const hint = document.getElementById('hint');
-            
-            // Alternar clases
-            wrapper.classList.toggle('open');
-            container.classList.toggle('is-open');
-            
-            // Ocultar/Mostrar instrucción
-            if(wrapper.classList.contains('open')) {
-                hint.style.display = 'none';
-            } else {
-                hint.style.display = 'block';
-            }
+        function openLetter() {
+            document.getElementById('mainWrapper').classList.add('opened');
         }
 
-        // Generador de corazones
+        // Corazones flotantes
         function createHeart() {
             const container = document.getElementById('heartContainer');
             const heart = document.createElement('div');
