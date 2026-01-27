@@ -1,127 +1,241 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Para ti, mi amor ❤️</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #ffe3ec, #f7b7c4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Quicksand', sans-serif;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti, mi amor ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #ffe3ec;
+            --color-envelope: #ff8fab;
+            --color-envelope-dark: #fb6f92;
+            --color-letter: #ffffff;
+            --color-text: #444;
+            --color-accent: #e75480;
+        }
 
-    .carta {
-      background: #ffffff;
-      max-width: 750px;
-      padding: 60px;
-      border-radius: 25px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.18);
-      animation: aparecer 1.5s ease;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      text-align: center;
-      color: #e75480;
-      margin-bottom: 40px;
-      font-size: 2.8em;
-    }
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--color-bg);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
 
-    p {
-      font-size: 1.15em;
-      line-height: 1.9;
-      margin-bottom: 22px;
-      color: #444;
-      text-align: justify;
-    }
+        /* Fondo de corazones flotantes */
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
-    .destacado {
-      background: #fff0f5;
-      padding: 18px;
-      border-left: 5px solid #e75480;
-      border-radius: 10px;
-      margin: 30px 0;
-      font-style: italic;
-    }
+        .heart-float {
+            position: absolute;
+            color: rgba(231, 84, 128, 0.3);
+            font-size: 20px;
+            animation: float 6s infinite linear;
+            bottom: -50px;
+        }
 
-    .firma {
-      margin-top: 50px;
-      text-align: right;
-      font-weight: 600;
-      font-size: 1.1em;
-    }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
 
-    .corazon {
-      text-align: center;
-      font-size: 2.5em;
-      animation: latido 1.5s infinite;
-      margin-top: 30px;
-    }
+        /* Estructura del Sobre */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
 
-    @keyframes aparecer {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        .envelope-wrapper:hover {
+            transform: scale(1.05);
+        }
 
-    @keyframes latido {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.25); }
-    }
-  </style>
+        .envelope {
+            position: relative;
+            width: 350px;
+            height: 230px;
+            background: var(--color-envelope);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            z-index: 2;
+            border-top: 115px solid transparent;
+            border-right: 175px solid var(--color-envelope-dark);
+            border-bottom: 115px solid var(--color-envelope-dark);
+            border-left: 175px solid var(--color-envelope);
+            border-radius: 0 0 15px 15px;
+        }
+
+        /* Tapa del sobre */
+        .flap {
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 130px solid var(--color-envelope-dark);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 3;
+        }
+
+        /* Carta dentro del sobre */
+        .letter {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 330px;
+            height: 200px;
+            background: var(--color-letter);
+            padding: 25px;
+            border-radius: 10px;
+            transition: transform 0.8s ease, height 0.8s ease;
+            z-index: 1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .letter h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--color-accent);
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .letter p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--color-text);
+            margin-bottom: 10px;
+        }
+
+        .letter .firma {
+            text-align: right;
+            font-weight: 600;
+            margin-top: 15px;
+            color: var(--color-accent);
+        }
+
+        /* Sello de corazón */
+        .heart-seal {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: #ff4d6d;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 25px;
+            z-index: 4;
+            transition: opacity 0.4s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Estado Abierto */
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope-wrapper.open .letter {
+            transform: translateY(-220px);
+            height: 450px; /* Se expande al abrirse */
+            z-index: 5;
+        }
+
+        .envelope-wrapper.open .heart-seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Scrollbar personalizado para la carta */
+        .letter::-webkit-scrollbar {
+            width: 5px;
+        }
+        .letter::-webkit-scrollbar-thumb {
+            background: var(--color-envelope);
+            border-radius: 10px;
+        }
+
+        .instruccion {
+            position: absolute;
+            bottom: 50px;
+            color: var(--color-accent);
+            font-weight: 600;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="carta">
-    <h1>Para ti, mi amor ❤️</h1>
+    <div class="hearts" id="heartContainer"></div>
 
-    <p>
-      No sabía cómo escribir todo lo que siento, porque hay emociones que no caben
-      en palabras… pero aun así quise intentarlo. Esta página es una pequeña prueba
-      de lo importante que eres para mí.
-    </p>
-
-    <p>
-      Desde que llegaste a mi vida, todo cambió. Cambió mi forma de sonreír, de pensar
-      en el futuro y de enfrentar los días difíciles. Contigo aprendí que el amor
-      no es solo sentir, sino elegir, cuidar y estar.
-    </p>
-
-    <p>
-      Me encanta tu forma de ser, tu risa, tu mirada y hasta esos pequeños detalles
-      que quizá tú no notas, pero que para mí significan todo. Cada momento contigo
-      se queda guardado en mi corazón.
-    </p>
-
-    <div class="destacado">
-      Gracias por ser mi calma en los días difíciles, mi alegría en los días buenos
-      y mi compañera en cada paso que damos juntos.
+    <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+        <div class="flap"></div>
+        <div class="envelope"></div>
+        <div class="letter">
+            <h1>Para ti, mi amor ❤️</h1>
+            <p>Aquí pones el texto que quieras...</p>
+            <p>No sabía cómo escribir todo lo que siento, porque hay emociones que no caben en palabras, pero decidí crear este pequeño rincón para ti.</p>
+            <p>Gracias por ser mi lugar seguro, por tus risas y por cada momento que compartimos. Eres la persona más especial en mi mundo.</p>
+            <p>Prometo seguir cuidando lo nuestro y elegirte todos los días.</p>
+            <p class="firma">Con todo mi amor,<br>Leo</p>
+        </div>
+        <div class="heart-seal">❤️</div>
     </div>
 
-    <p>
-      No prometo ser perfecto, pero sí prometo amarte con honestidad, respetarte,
-      apoyarte y elegirte una y otra vez. Prometo seguir construyendo recuerdos,
-      sueños y un futuro donde siempre estemos juntos.
-    </p>
+    <div class="instruccion">Haz clic para abrir</div>
 
-    <p>
-      Si algún día dudas, vuelve a leer estas palabras y recuerda que aquí hay
-      alguien que te ama más de lo que puede explicar.
-    </p>
+    <script>
+        // Crear corazones flotantes de fondo
+        function createHeart() {
+            const container = document.getElementById('heartContainer');
+            const heart = document.createElement('div');
+            heart.classList.add('heart-float');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.opacity = Math.random();
+            container.appendChild(heart);
 
-    <p class="firma">
-      Con todo mi amor,<br>
-      <strong>Leo</strong>
-    </p>
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
 
-    <div class="corazon">❤️</div>
-  </div>
-
+        setInterval(createHeart, 300);
+    </script>
 </body>
 </html>
-
