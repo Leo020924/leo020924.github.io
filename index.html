@@ -10,8 +10,6 @@
             --color-bg: #ffe3ec;
             --color-envelope: #ff8fab;
             --color-envelope-dark: #fb6f92;
-            --color-letter: #ffffff;
-            --color-text: #444;
             --color-accent: #e75480;
         }
 
@@ -26,7 +24,6 @@
             background-color: var(--color-bg);
             font-family: 'Quicksand', sans-serif;
             overflow: hidden;
-            position: relative;
         }
 
         /* Corazones de fondo */
@@ -43,20 +40,8 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Contenedor principal */
-        .wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-        }
-
         /* SOBRE */
-        .envelope {
+        #envelope-container {
             position: relative;
             width: 350px;
             height: 230px;
@@ -64,11 +49,11 @@
             border-radius: 0 0 15px 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             cursor: pointer;
-            transition: all 0.6s ease;
-            z-index: 20;
+            z-index: 10;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        .envelope::before {
+        #envelope-container::before {
             content: "";
             position: absolute;
             z-index: 4;
@@ -81,137 +66,100 @@
 
         .flap {
             position: absolute;
-            top: 0;
-            width: 0;
-            height: 0;
+            top: 0; width: 0; height: 0;
             border-left: 175px solid transparent;
             border-right: 175px solid transparent;
             border-top: 130px solid var(--color-envelope-dark);
-            transform-origin: top;
             z-index: 5;
         }
 
         .heart-seal {
             position: absolute;
-            top: 100px;
-            left: 50%;
+            top: 100px; left: 50%;
             transform: translateX(-50%);
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             background: #ff4d6d;
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 25;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center;
+            color: white; z-index: 6;
         }
 
-        /* LA CARTA (Oculta al inicio) */
-        .letter {
+        /* CARTA (Empieza oculta y pequeña) */
+        #letter-modal {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0);
             width: 90%;
             max-width: 500px;
-            max-height: 85vh;
+            max-height: 80vh;
             background: white;
             padding: 40px 30px;
             border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            opacity: 0;
-            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             z-index: 100;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow-y: auto;
         }
 
-        .letter h1 {
-            font-family: 'Dancing Script', cursive;
-            color: var(--color-accent);
-            font-size: 32px;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .letter p {
-            font-size: 16px;
-            line-height: 1.8;
-            color: var(--color-text);
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-
-        .letter .firma {
-            text-align: right;
-            font-weight: 600;
-            margin-top: 25px;
-            color: var(--color-accent);
-            font-size: 18px;
-        }
-
-        /* CUANDO SE ABRE */
-        .opened .envelope {
-            opacity: 0;
-            transform: scale(0.5);
-            pointer-events: none;
-        }
-
-        .opened .letter {
+        #letter-modal.active {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
 
+        h1 { font-family: 'Dancing Script', cursive; color: var(--color-accent); font-size: 30px; text-align: center; margin-bottom: 20px; }
+        p { font-size: 16px; line-height: 1.7; color: #444; margin-bottom: 15px; text-align: justify; }
+        .firma { text-align: right; font-weight: 600; color: var(--color-accent); margin-top: 20px; }
+
         .instruction {
             position: absolute;
-            bottom: -60px;
-            color: var(--color-accent);
-            font-weight: 600;
+            bottom: -50px; width: 100%; text-align: center;
+            color: var(--color-accent); font-weight: 600;
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-        /* Scrollbar bonito */
-        .letter::-webkit-scrollbar { width: 6px; }
-        .letter::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 10px; }
+        /* Scrollbar */
+        #letter-modal::-webkit-scrollbar { width: 5px; }
+        #letter-modal::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div class="hearts" id="heartContainer"></div>
 
-    <div class="wrapper" id="mainWrapper">
-        <!-- Sobre clickeable -->
-        <div class="envelope" onclick="openLetter()">
-            <div class="flap"></div>
-            <div class="heart-seal">❤️</div>
-            <div class="instruction">Haz clic para abrir</div>
-        </div>
+    <!-- El Sobre -->
+    <div id="envelope-container" onclick="openMe()">
+        <div class="flap"></div>
+        <div class="heart-seal">❤️</div>
+        <div class="instruction">Haz clic para abrir</div>
+    </div>
 
-        <!-- Carta que aparece centrada -->
-        <div class="letter">
-            <h1>Para ti, mi amor ❤️</h1>
-            
-            <p>No sabía muy bien cómo decir todo lo que siento, así que decidí hacerlo de una forma distinta. Esta página existe solo por ti.</p>
-            
-            <p>Desde que llegaste a mi vida, todo tiene más sentido. Tus palabras, tu risa, tu forma de ver el mundo... todo eso se volvió parte de mis días y de mi corazón.</p>
-            
-            <p>Gracias por acompañarme, por apoyarme, por quererme incluso en mis momentos difíciles. No eres solo mi novia, eres mi lugar seguro.</p>
-            
-            <p>Prometo seguir eligiéndote cada día, cuidar lo nuestro y hacerte sentir tan especial como realmente eres.</p>
-            
-            <p class="firma">Con todo mi amor,<br>Leo</p>
-        </div>
+    <!-- La Carta (Modal central) -->
+    <div id="letter-modal">
+        <h1>Para ti, mi amor ❤️</h1>
+        <p>No sabía muy bien cómo decir todo lo que siento, así que decidí hacerlo de una forma distinta. Esta página existe solo por ti.</p>
+        <p>Desde que llegaste a mi vida, todo tiene más sentido. Tus palabras, tu risa, tu forma de ver el mundo... todo eso se volvió parte de mis días y de mi corazón.</p>
+        <p>Gracias por acompañarme, por apoyarme, por quererme incluso en mis momentos difíciles. No eres solo mi novia, eres mi lugar seguro.</p>
+        <p>Prometo seguir eligiéndote cada día, cuidar lo nuestro y hacerte sentir tan especial como realmente eres.</p>
+        <p class="firma">Con todo mi amor,<br>Leo</p>
     </div>
 
     <script>
-        function openLetter() {
-            document.getElementById('mainWrapper').classList.add('opened');
+        function openMe() {
+            // 1. Ocultar el sobre
+            const env = document.getElementById('envelope-container');
+            env.style.opacity = '0';
+            env.style.transform = 'scale(0.8)';
+            
+            // 2. Mostrar la carta en el centro después de un breve delay
+            setTimeout(() => {
+                env.style.display = 'none';
+                document.getElementById('letter-modal').classList.add('active');
+            }, 300);
         }
 
-        // Corazones flotantes
         function createHeart() {
             const container = document.getElementById('heartContainer');
             const heart = document.createElement('div');
