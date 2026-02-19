@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro Tiempo Juntos ❤️</title>
+    <!-- Fuente elegante de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --bg-gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            color: #444;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-weight: 300;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 15px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .time-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #d90429;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .footer-text {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Botón para volver a la carta */
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: white;
+            background: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #ef233c;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Llevamos juntos...</h1>
+        <p class="subtitle">Cada segundo a tu lado es un regalo 🌹</p>
+
+        <div class="timer-grid">
+            <div class="time-box">
+                <span class="number" id="years">0</span>
+                <span class="label">Años</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="months">0</span>
+                <span class="label">Meses</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="days">0</span>
+                <span class="label">Días</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="hours">0</span>
+                <span class="label">Horas</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="minutes">0</span>
+                <span class="label">Minutos</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="seconds">0</span>
+                <span class="label">Segundos</span>
+            </div>
+        </div>
+
+        <p class="footer-text">"Te amo más que ayer, pero menos que mañana."</p>
+        
+        <a href="index.html" class="btn-back">⬅ Volver a la carta</a>
+    </div>
+
+    <script>
+        // CAMBIA LA FECHA AQUÍ: (Año, Mes - 1, Día, Hora, Minuto)
+        // Nota: En JavaScript los meses empiezan en 0 (Enero es 0, Febrero es 1, etc.)
+        // Ejemplo: 14 de Febrero de 2023 -> new Date(2023, 1, 14, 0, 0, 0)
+        const startDate = new Date(2026, 0, 20, 0, 0, 0); 
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const seconds = Math.floor((diff / 1000) % 60);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            
+            // Cálculo aproximado de días, meses y años
+            const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const years = Math.floor(totalDays / 365);
+            const months = Math.floor((totalDays % 365) / 30);
+            const days = Math.floor((totalDays % 365) % 30);
+
+            document.getElementById('years').innerText = years;
+            document.getElementById('months').innerText = months;
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
