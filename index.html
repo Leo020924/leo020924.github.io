@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -84,14 +85,14 @@
             color: white; z-index: 6;
         }
 
-        /* CARTA (Empieza oculta y pequeña) */
+        /* CARTA */
         #letter-modal {
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0);
             width: 90%;
             max-width: 500px;
-            max-height: 80vh;
+            max-height: 85vh;
             background: white;
             padding: 40px 30px;
             border-radius: 20px;
@@ -118,9 +119,57 @@
             animation: pulse 1.5s infinite;
         }
 
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        /* BOTÓN CONTADOR */
+        .btn-counter {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 25px;
+            background: var(--color-accent);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-counter:hover { background: var(--color-envelope-dark); transform: translateY(-3px); }
 
-        /* Scrollbar */
+        /* ESTILOS DEL CONTADOR (NUEVO) */
+        #timer-container {
+            display: none;
+            text-align: center;
+            z-index: 200;
+            width: 90%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .time-box {
+            background: white;
+            padding: 15px 5px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .time-box span { display: block; }
+        .num { font-size: 24px; font-weight: 700; color: var(--color-accent); }
+        .label { font-size: 12px; color: #888; text-transform: uppercase; }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         #letter-modal::-webkit-scrollbar { width: 5px; }
         #letter-modal::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 10px; }
     </style>
@@ -136,7 +185,7 @@
         <div class="instruction">Dale clic amor</div>
     </div>
 
-    <!-- La Carta (Modal central) -->
+    <!-- La Carta -->
     <div id="letter-modal">
         <h1>Mi amor ❤️</h1>
         <p>Desde el 27 de diciembre, cuando me diste la oportunidad de conocernos y ver qué podía surgir, mi vida empezó a llenarse de una forma muy bonita. Sin darme cuenta, fuiste entrando en mis días, en mis pensamientos y en mi corazón.</p>
@@ -145,20 +194,70 @@
         <p>Gracias por acompañarme, por apoyarme, por quererme incluso en mis momentos difíciles. No eres solo mi novia, eres mi lugar seguro.</p>
         <p>Como te lo he dicho muchas veces, yo contigo si quiero formar una familia y tener muchos hijos .</p>
         <p class="firma">Con todo mi amor,<br>Tu novio y esposo Leo ❤️</p>
+        
+        <!-- Botón para pasar al contador -->
+        <button class="btn-counter" onclick="showTimer()">Ver cuánto tiempo llevamos juntos ❤️</button>
+    </div>
+
+    <!-- El Contador (Aparece después) -->
+    <div id="timer-container">
+        <h1>Nuestro Tiempo Juntos ❤️</h1>
+        <div class="timer-grid">
+            <div class="time-box"><span class="num" id="years">0</span><span class="label">Años</span></div>
+            <div class="time-box"><span class="num" id="months">0</span><span class="label">Meses</span></div>
+            <div class="time-box"><span class="num" id="days">0</span><span class="label">Días</span></div>
+            <div class="time-box"><span class="num" id="hours">0</span><span class="label">Horas</span></div>
+            <div class="time-box"><span class="num" id="minutes">0</span><span class="label">Min</span></div>
+            <div class="time-box"><span class="num" id="seconds">0</span><span class="label">Seg</span></div>
+        </div>
+        <p style="margin-top: 20px; font-style: italic; color: #666;">Y contando... por siempre.</p>
     </div>
 
     <script>
+        // --- FECHA DE INICIO ---
+        // (Año, Mes-1, Día) -> Diciembre es el mes 11 en JS
+        const startDate = new Date(2024, 11, 27, 0, 0, 0); 
+
         function openMe() {
-            // 1. Ocultar el sobre
             const env = document.getElementById('envelope-container');
             env.style.opacity = '0';
             env.style.transform = 'scale(0.8)';
-            
-            // 2. Mostrar la carta en el centro después de un breve delay
             setTimeout(() => {
                 env.style.display = 'none';
                 document.getElementById('letter-modal').classList.add('active');
             }, 300);
+        }
+
+        function showTimer() {
+            // Ocultar carta y mostrar contador
+            document.getElementById('letter-modal').style.display = 'none';
+            const timerCont = document.getElementById('timer-container');
+            timerCont.style.display = 'block';
+            
+            // Iniciar el reloj
+            setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const seconds = Math.floor((diff / 1000) % 60);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            
+            const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const years = Math.floor(totalDays / 365);
+            const months = Math.floor((totalDays % 365) / 30);
+            const days = Math.floor((totalDays % 365) % 30);
+
+            document.getElementById('years').innerText = years;
+            document.getElementById('months').innerText = months;
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
         }
 
         function createHeart() {
